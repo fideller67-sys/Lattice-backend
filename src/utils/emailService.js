@@ -10,6 +10,7 @@ const sendOtpEmail = async (to, otp) => {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      connectionTimeout: 3000, // Fail fast if SMTP is blocked (e.g. Render free tier)
     });
 
     const mailOptions = {
