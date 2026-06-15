@@ -7,7 +7,6 @@ export const getProjects = async (req, res) => {
 
     let projects = await Project.find({ workspaceName: workspace });
 
-    // If no projects exist, seed the default mock projects so the sidebar isn't totally empty
     if (projects.length === 0) {
       const defaultProjects = [
         { slug: 'core-auth-revamp', name: 'Core Auth Revamp', workspaceName: workspace, color: 'blue' },
@@ -52,7 +51,6 @@ export const getProject = async (req, res) => {
     
     let project = await Project.findOne({ slug, workspaceName: workspace });
 
-    // Seed mock data if not exists
     if (!project) {
       if (slug === 'core-auth-revamp') {
         project = await Project.create({

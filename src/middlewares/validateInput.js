@@ -1,8 +1,3 @@
-/**
- * Generic Joi validation middleware factory.
- * Pass a Joi schema, and it returns an Express middleware
- * that validates req.body against that schema.
- */
 const validateBody = (schema) => {
   return (req, res, next) => {
     const { error, value } = schema.validate(req.body, { abortEarly: false });
@@ -13,15 +8,11 @@ const validateBody = (schema) => {
       }));
       return res.status(400).json({ message: 'Validation failed', errors });
     }
-    // Replace body with the parsed/cleaned data
     req.body = value;
     next();
   };
 };
 
-/**
- * Validates req.params against a Joi schema.
- */
 const validateParams = (schema) => {
   return (req, res, next) => {
     const { error, value } = schema.validate(req.params, { abortEarly: false });

@@ -9,7 +9,6 @@ export const getDashboardStats = async (req, res) => {
 
     const workspace = req.user.workspaceName;
 
-    // Task stats for this workspace
     const allTasks = await Task.find({ workspaceName: workspace });
     const totalTasks = allTasks.length;
     const doneTasks = allTasks.filter(t => t.status === 'done').length;
@@ -19,14 +18,11 @@ export const getDashboardStats = async (req, res) => {
     const backlogTasks = allTasks.filter(t => t.status === 'backlog').length;
     const highPriorityOpen = allTasks.filter(t => t.priority === 'High' && t.status !== 'done').length;
 
-    // Velocity = % of tasks that are done or in-review
     const velocity = totalTasks > 0 ? Math.round(((doneTasks + reviewTasks) / totalTasks) * 100) : 0;
 
-    // Tasks assigned to the current user
     const myTasks = allTasks.filter(t => t.assignedTo && t.assignedTo.toString() === req.user.id);
     const myOpenTasks = myTasks.filter(t => t.status !== 'done').length;
 
-    // Workspace member count
     const memberCount = await User.countDocuments({ workspaceName: workspace });
 
     res.status(200).json({

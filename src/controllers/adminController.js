@@ -76,7 +76,6 @@ export const updateUserRole = async (req, res) => {
       return res.status(400).json({ message: 'Invalid role' });
     }
 
-    // Don't let them change their own role
     if (id === req.user.id) {
       return res.status(400).json({ message: 'You cannot change your own role' });
     }
@@ -104,7 +103,6 @@ export const deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params;
     
-    // Don't let an admin delete themselves
     if (id === req.user.id) {
       return res.status(HttpStatusCode.BadRequest).json({ message: 'You cannot delete your own account' });
     }
@@ -139,9 +137,6 @@ export const inviteUser = async (req, res, next) => {
   try {
     const { email, role } = req.body;
     
-    // Simulate inviting a user by creating a stub user
-    // Since we don't have an email sending workflow here fully fleshed out,
-    // we'll create a dummy user in the workspace.
     
     const existing = await User.findOne({ email });
     if (existing) {

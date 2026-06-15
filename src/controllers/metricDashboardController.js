@@ -1,8 +1,5 @@
 import MetricDashboard from '../models/MetricDashboard.js';
 
-// @desc    Get dashboard by slug
-// @route   GET /api/metric-dashboards/:slug
-// @access  Private (Assuming authentication middleware in route)
 export const getDashboardBySlug = async (req, res) => {
   try {
     const dashboard = await MetricDashboard.findOne({ slug: req.params.slug });

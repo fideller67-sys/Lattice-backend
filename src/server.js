@@ -44,10 +44,8 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to Lattice Backend' });
 });
 
-// Seed data
 seedMetricDashboards();
 
-// Error handling middlewares (must be last)
 app.use(notFound);
 app.use(errorHandler);
 

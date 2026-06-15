@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 
-// Simple logger implementation
 export const logger = {
   info: (message) => {
     console.log(`[INFO] ${new Date().toISOString()} - ${message}`);

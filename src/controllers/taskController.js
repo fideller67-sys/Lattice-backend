@@ -6,7 +6,6 @@ export const createTask = async (req, res) => {
   try {
     const { title, description, status, priority, sprint, assignedTo, physics } = req.body;
     
-    // The user must belong to a workspace
     if (!req.user.workspaceName) {
       return res.status(HttpStatusCode.BadRequest).json({ message: 'User must complete onboarding and join a workspace before creating tasks' });
     }
@@ -41,7 +40,6 @@ export const getTasks = async (req, res) => {
       .populate('assignedTo', 'name avatarInitials')
       .populate('createdBy', 'name avatarInitials');
 
-    // Return the HTTP 200 explicitly 
     res.status(200).json(tasks);
   } catch (error) {
     console.error('Error getting tasks:', error);
@@ -53,21 +51,15 @@ export const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // Find task
     let task = await Task.findById(id);
     if (!task) {
       return res.status(HttpStatusCode.NotFound).json({ message: 'Task not found' });
     }
 
-    // Ensure user belongs to the same workspace
     if (task.workspaceName !== req.user.workspaceName) {
       return res.status(HttpStatusCode.Forbidden).json({ message: 'Not authorized to update this task' });
     }
 
-    // Because we have a pre-save hook for calculating momentum, doing a findByIdAndUpdate
-    // bypasses pre-save hooks. So we should update the document fields and save it manually
-    // or just let the front-end handle momentum if we stick with findByIdAndUpdate.
-    // For completeness, we'll manually set fields and save() so the pre-save hook runs.
     
     const updateKeys = Object.keys(req.body);
     updateKeys.forEach(key => {
@@ -76,7 +68,6 @@ export const updateTask = async (req, res) => {
 
     await task.save();
 
-    // Populate for the response
     await task.populate('assignedTo', 'name avatarInitials');
     await task.populate('createdBy', 'name avatarInitials');
 
@@ -96,7 +87,6 @@ export const deleteTask = async (req, res) => {
       return res.status(HttpStatusCode.NotFound).json({ message: 'Task not found' });
     }
 
-    // Ensure user belongs to the same workspace
     if (task.workspaceName !== req.user.workspaceName) {
       return res.status(HttpStatusCode.Forbidden).json({ message: 'Not authorized to delete this task' });
     }

@@ -1,13 +1,11 @@
 import NavigationNode from '../models/NavigationNode.js';
 import PageContent from '../models/PageContent.js';
 
-// ─── Navigation Node CRUD ───────────────────────────────────
 
 export const getNavNodes = async (req, res, next) => {
   try {
     const nodes = await NavigationNode.find().sort({ category: 1, displayOrder: 1 });
 
-    // Filter locked nodes: only directors and admins can see them
     const userRole = req.user.role;
     const filtered = nodes.filter((node) => {
       if (node.isLocked && !['director', 'admin'].includes(userRole)) {
@@ -60,7 +58,6 @@ export const deleteNavNode = async (req, res, next) => {
   }
 };
 
-// ─── Page Content CRUD ──────────────────────────────────────
 
 export const getPages = async (req, res, next) => {
   try {
@@ -79,7 +76,6 @@ export const getPageBySlug = async (req, res, next) => {
       throw new Error('Page not found');
     }
 
-    // Build a role-filtered response so each role only sees their own payload
     const userRole = req.user.role;
     const response = {
       _id: page._id,

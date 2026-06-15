@@ -4,7 +4,6 @@ export const getNotifications = async (req, res) => {
   try {
     let notifications = await Notification.find({ user: req.user._id }).sort({ createdAt: -1 });
 
-    // Seed some fake notifications if none exist to make the UI look good initially
     if (notifications.length === 0) {
       const defaultNotifications = [
         {

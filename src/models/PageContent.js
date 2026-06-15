@@ -16,7 +16,6 @@ const PageContentSchema = new mongoose.Schema({
     required: true 
   },
 
-  // Developer Portal View Patterns
   developerPayload: {
     activeSprintVelocity: { type: Number, default: 0 },
     openBlockersCount: { type: Number, default: 0 },
@@ -24,7 +23,6 @@ const PageContentSchema = new mongoose.Schema({
     assignedBranches: { type: Array, default: [] }
   },
 
-  // Product Manager View Patterns
   pmPayload: {
     okrAlignmentTags: { type: [String], default: [] },
     userImpactScore: { type: Number, default: 0 },
@@ -32,7 +30,6 @@ const PageContentSchema = new mongoose.Schema({
     dependencyMapping: { type: mongoose.Schema.Types.Mixed, default: {} }
   },
 
-  // Director Oversight View Patterns
   directorPayload: {
     headcountAllocated: { type: Number, default: 0 },
     capExBudgetBurn: { type: Number, default: 0 },

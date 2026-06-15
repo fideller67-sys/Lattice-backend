@@ -37,7 +37,6 @@ const sendOtpEmail = async (to, otp) => {
     return true;
   } catch (error) {
     console.error('Error sending OTP email:', error);
-    // In local dev, if SMTP is not configured, we still want to log the OTP to the console
     console.warn(`[DEV] OTP for ${to} is: ${otp}`);
     return false;
   }

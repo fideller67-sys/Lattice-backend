@@ -26,7 +26,6 @@ const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Calculate avatarInitials from the user's name
     const avatarInitials = name
       .split(' ')
       .map(n => n[0])
@@ -42,7 +41,6 @@ const registerUser = async (req, res) => {
     });
 
     if (user) {
-      // Generate 6-digit OTP
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       const otpSalt = await bcrypt.genSalt(10);
       const hashedOtp = await bcrypt.hash(otp, otpSalt);
@@ -108,7 +106,6 @@ const verifyOtp = async (req, res) => {
     }
 
     if (Date.now() > user.otpExpires) {
-      // remove expired otp
       user.otp = undefined;
       user.otpExpires = undefined;
       await user.save();
@@ -118,7 +115,6 @@ const verifyOtp = async (req, res) => {
     const isMatch = await bcrypt.compare(otp.toString(), user.otp);
 
     if (isMatch) {
-      // Clear OTP and set verified
       user.otp = undefined;
       user.otpExpires = undefined;
       user.isVerified = true;
@@ -143,7 +139,6 @@ const verifyOtp = async (req, res) => {
 
 const getMe = async (req, res) => {
   try {
-    // req.user is passed from the auth middleware after verifying the token
     const user = await User.findById(req.user.id).select('-password'); // Exclude password
     res.status(200).json(user);
   } catch (error) {
@@ -198,7 +193,6 @@ const githubCallback = async (req, res) => {
     const clientId = process.env['Client-Id'];
     const clientSecret = process.env['Client-secret'];
 
-    // 1. Exchange code for access token
     const tokenResponse = await axios.post(
       'https://github.com/login/oauth/access_token',
       {
@@ -214,12 +208,10 @@ const githubCallback = async (req, res) => {
       return res.status(400).json({ message: 'GitHub login failed' });
     }
 
-    // 2. Get user info from GitHub
     const userResponse = await axios.get('https://api.github.com/user', {
       headers: { Authorization: `token ${accessToken}` },
     });
     
-    // Also get primary email
     const emailResponse = await axios.get('https://api.github.com/user/emails', {
       headers: { Authorization: `token ${accessToken}` },
     });
@@ -232,19 +224,15 @@ const githubCallback = async (req, res) => {
       return res.status(400).json({ message: 'GitHub email not found' });
     }
 
-    // 3. Find or create user
     let user = await User.findOne({ githubId: githubUser.id.toString() });
     
     if (!user) {
-      // Check if email exists
       user = await User.findOne({ email });
       if (user) {
-        // Link github to existing account
         user.githubId = githubUser.id.toString();
         user.githubAccessToken = accessToken;
         await user.save();
       } else {
-        // Create new user
         const name = githubUser.name || githubUser.login;
         const avatarInitials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'GH';
         
@@ -254,21 +242,17 @@ const githubCallback = async (req, res) => {
           githubId: githubUser.id.toString(),
           githubAccessToken: accessToken,
           avatarInitials,
-          // role and workspaceName are default
         });
       }
     } else {
-      // Update access token
       user.githubAccessToken = accessToken;
       await user.save();
     }
 
-    // 4. Generate token and redirect to frontend
     const token = generateToken(user.id);
     
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     
-    // If the user hasn't set a workspaceName/role, they need onboarding.
     if (!user.workspaceName || user.workspaceName === '') {
       res.redirect(`${frontendUrl}/auth/callback?token=${token}&needsOnboarding=true`);
     } else {

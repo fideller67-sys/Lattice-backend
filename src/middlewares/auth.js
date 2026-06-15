@@ -20,7 +20,6 @@ const protect = async (req, res, next) => {
   }
 };
 
-// @param  {...string} allowedRoles - e.g., 'admin', 'manager'
  
 const authorizeRoles = (...allowedRoles) => {
   return (req, res, next) => {

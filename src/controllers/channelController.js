@@ -8,7 +8,6 @@ export const getChannels = async (req, res) => {
 
     let channels = await Channel.find({ workspaceName: workspace });
 
-    // Seed default channels if none exist
     if (channels.length === 0) {
       const defaultChannels = [
         { name: 'PlatformEng', description: 'Core platform engineering', workspaceName: workspace },
@@ -54,7 +53,6 @@ export const getMessages = async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(50); // Get latest 50 messages
     
-    // Reverse to chronological order for the UI
     res.status(200).json(messages.reverse());
   } catch (error) {
     console.error('Error fetching messages:', error);
