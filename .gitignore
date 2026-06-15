@@ -1,0 +1,6 @@
+/node_modules
+.env
+.history/
+ngrok.exe
+ngrok.yml
+error.log
