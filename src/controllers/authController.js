@@ -186,7 +186,8 @@ import axios from 'axios';
 
 const githubLogin = (req, res) => {
   const clientId = process.env['Client-Id'];
-  const redirectUri = `http://localhost:5000/api/auth/github/callback`;
+  const backendUrl = process.env.BACKEND_URL || 'http://localhost:5000';
+  const redirectUri = `${backendUrl}/api/auth/github/callback`;
   const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=read:user user:email repo`;
   res.redirect(url);
 };
@@ -265,11 +266,13 @@ const githubCallback = async (req, res) => {
     // 4. Generate token and redirect to frontend
     const token = generateToken(user.id);
     
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    
     // If the user hasn't set a workspaceName/role, they need onboarding.
     if (!user.workspaceName || user.workspaceName === '') {
-      res.redirect(`http://localhost:5173/auth/callback?token=${token}&needsOnboarding=true`);
+      res.redirect(`${frontendUrl}/auth/callback?token=${token}&needsOnboarding=true`);
     } else {
-      res.redirect(`http://localhost:5173/auth/callback?token=${token}&role=${user.role}`);
+      res.redirect(`${frontendUrl}/auth/callback?token=${token}&role=${user.role}`);
     }
 
   } catch (error) {
