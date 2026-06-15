@@ -57,7 +57,17 @@ const taskSchema = new mongoose.Schema(
         y: { type: Number, default: 0 },
       },
     },
-    githubLinks: [{ type: String }], 
+    githubLinks: [{ type: String }],
+    epic: {
+      type: String,
+      default: '',
+    },
+    checklist: [
+      {
+        text: String,
+        isCompleted: { type: Boolean, default: false },
+      }
+    ],
   },
   {
     timestamps: true,
